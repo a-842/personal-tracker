@@ -1,4 +1,4 @@
-A lightweight flask template that's easy to switch to production
+A Personal Tracker that uses garmin to track what your doing at different times of day
 
 
 When first installing:

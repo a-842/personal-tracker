@@ -58,3 +58,4 @@ env/
 .idea/
 *.swp
 *.swo
+tracker.db

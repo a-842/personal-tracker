@@ -1,6 +1,8 @@
 from flask import Flask
 from dotenv import load_dotenv
 import os
+import database
+
 
 def create_app(config_name=None):
     # Load environment variables from .env file
