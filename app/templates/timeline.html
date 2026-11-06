@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Timeline</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h2 { text-align: center; margin-bottom: 30px; }
+        .day-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .date-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+        /* 24-hour track container */
+        .timeline-track {
+            position: relative;
+            height: 40px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        /* Activity bar */
+        .activity-bar {
+            position: absolute;
+            top: 4px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .activity-bar:hover {
+            background: #2563eb;
+        }
+        /* Hour axis markers */
+        .timeline-axis {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #64748b;
+            padding: 0 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Activity Timeline</h2>
+
+
+    <div class="day-card">
+        <div class="date-header">{{ date }}</div>
+        
+        <div class="timeline-track">
+            {% for activity in day_data %}
+            <div class="activity-bar" 
+                 style="left: {{ activity[0] }}%; width: {{ activity[1] }}%;">
+                {{ activity[2] }}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Axis labels -->
+        <div class="timeline-axis">
+            <span>00:00</span>
+            <span>06:00</span>
+            <span>12:00</span>
+            <span>18:00</span>
+            <span>24:00</span>
+        </div>
+    </div>
+
+
+</body>
+</html>

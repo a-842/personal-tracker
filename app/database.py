@@ -2,7 +2,9 @@ import sqlite3
 import datetime
 
 
-conn = sqlite3.connect("tracker.db")
+conn = sqlite3.connect("tracker.db", 
+                       check_same_thread=False,
+                       detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES)
 cursor = conn.cursor()
 
 

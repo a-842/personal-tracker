@@ -30,7 +30,6 @@ def workouts_timeline(date):
     
     formatted_data = []
     for activity in data:
-        print(activity)
         start = activity.get("startTimeGMT")
         end = activity.get("endTimeGMT")
         activity_type = activity.get("activityType", {}).get("typeKey")
@@ -72,6 +71,6 @@ def handle(date):
 if __name__ == "__main__":
     database.setup()
     #print(moveIQ_timeline("2026-11-05"))
-    handle("2026-11-05")
+    handle("2026-11-06")
     database.close()
     
