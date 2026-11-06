@@ -4,8 +4,6 @@ import datetime
 
 conn = sqlite3.connect("tracker.db")
 cursor = conn.cursor()
-    
-print("database connected")
 
 
 def setup():
@@ -29,12 +27,21 @@ def get_all_activities():
     return cursor.fetchall()
 
 def get_date_activities(date):
-    cursor.execute("SELECT start, end, type FROM timeline WHERE DATE(end) = ? or DATE(start) = ?", (date, date))
+    date_str = date.isoformat()
+    cursor.execute("SELECT start, end, type FROM timeline WHERE DATE(end) = ? or DATE(start) = ?", (date_str, date_str))
     return cursor.fetchall()
 
 def insert_activity(start, end, type):
     cursor.execute(
-        "INSERT INTO timeline (start, end, type) VALUES (?, ?, ?)", (start, end, type)
+        """
+        INSERT INTO timeline (start, end, type)
+        SELECT ?, ?, ?
+        WHERE NOT EXISTS (
+            SELECT 1 FROM timeline 
+            WHERE start = ? AND end = ? AND type = ?
+        )
+        """, 
+        (start, end, type, start, end, type)
     )
 
 def get_last_update():
@@ -57,7 +64,7 @@ if __name__ == "__main__":
     print("running database directly")
     setup()
     commit()
-   # insert_activity(datetime.datetime.now(), datetime.datetime.now(), "run")
+  
     print(get_date_activities(datetime.date(2026, 11, 7)))
 
     commit()
