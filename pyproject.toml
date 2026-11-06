@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "flask_app"
+name = "personal-tracker"
 version = "0.1.0"
-description = "reusable Flask template that can easily switch to production"
+description = "Personal Tracker using Garmin API"
 dependencies = [
     "flask>=3.0.0",
     "waitress>=3.0.0",
