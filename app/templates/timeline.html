@@ -9,29 +9,19 @@
 
     <h2>Activity Timeline</h2>
 
-
-    <div class="day-card">
-        <div class="date-header">{{ date }}</div>
-        
-        <div class="timeline-track">
-            {% for activity in day_data %}
-            <div class="activity-bar" 
-                 style="left: {{ activity[0] }}%; width: {{ activity[1] }}%;">
-                {{ activity[2] }}
+    {% for day_data in days_data %}
+        <div class="day-card">
+            <div class="date-header">{{ day_data[0] }}</div>
+            <div class="timeline-track">
+                {% for activity in day_data[1] %}
+                <div class="activity-bar" 
+                    style="left: {{ activity[0] }}%; width: {{ activity[1] }}%;">
+                    {{ activity[2] }}
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
-        
-        <!-- Axis labels -->
-        <div class="timeline-axis">
-            <span>00:00</span>
-            <span>06:00</span>
-            <span>12:00</span>
-            <span>18:00</span>
-            <span>24:00</span>
-        </div>
-        
-    </div>
+    {% endfor %}
 
 
 </body>

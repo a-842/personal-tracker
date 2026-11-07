@@ -24,6 +24,12 @@ def setup():
             date DATE PRIMARY KEY
         )
     """)
+    cursor.execute("""
+            CREATE TABLE IF NOT EXISTS colour (
+                type TEXT PRIMARY KEY
+                colour TEXT 
+            )
+        """)
     cursor.execute("SELECT * FROM lastUpdate")
     isDate = cursor.fetchone()
     if not isDate:

@@ -17,13 +17,17 @@ def get_timeline_data_date(date):
     return out_data
 
 def get_timeline_data():
-    start = database.get_last_update()
+    start = datetime.date(2026, 11, 4)
     end = datetime.date.today()
+
+    days_data = []
 
     current = start
     while current <= end:
-        
+        days_data.append((current.isoformat(), get_timeline_data_date(current)))
         current += datetime.timedelta(days=1)
+
+    return days_data
 
         
 
