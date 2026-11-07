@@ -61,9 +61,9 @@ def handle(date):
     for activity in workout_data:
         database.insert_activity(activity[0], activity[1], activity[2])
 
-    moveIQ_data = moveIQ_timeline(date)
-    for activity in moveIQ_data:
-        database.insert_activity(activity[0], activity[1], activity[2])
+    # moveIQ_data = moveIQ_timeline(date)
+    # for activity in moveIQ_data:
+    #     database.insert_activity(activity[0], activity[1], activity[2])
 
     database.commit()
 
