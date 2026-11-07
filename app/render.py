@@ -1,7 +1,7 @@
 from app import database
 import datetime
 
-def get_timeline_data(date):
+def get_timeline_data_date(date):
     raw_data = database.get_date_activities(date)
 
     out_data = []
@@ -16,7 +16,14 @@ def get_timeline_data(date):
 
     return out_data
 
+def get_timeline_data():
+    start = database.get_last_update()
+    end = datetime.date.today()
 
+    current = start
+    while current <= end:
+        
+        current += datetime.timedelta(days=1)
 
         
 

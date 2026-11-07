@@ -1,6 +1,6 @@
 import os 
 from dotenv import load_dotenv
-from garmin_personal_api import PersonalApiAuthenticator, GarminPersonalApiClient
+from garmin_personal_api import PersonalApiAuthenticator, GarminPersonalApiClient, HttpError
 import datetime
 from app import database
 
@@ -18,11 +18,17 @@ with PersonalApiAuthenticator() as authenticator:
 
 def sleep_timeline(date):
     with GarminPersonalApiClient(access_token) as client:
-        data = client.get_daily_sleep(date)
-    start = datetime.datetime.fromtimestamp(data.get("sleepStartTimestampGMT")/1000)
-    end = datetime.datetime.fromtimestamp(data.get("sleepEndTimestampGMT")/1000)
+        try:
+            data = client.get_daily_sleep(date)
+            if not data or not data.get("sleepStartTimestampGMT") or not data.get("sleepEndTimestampGMT"):
+                return False
+            start = datetime.datetime.fromtimestamp(data.get("sleepStartTimestampGMT")/1000)
+            end = datetime.datetime.fromtimestamp(data.get("sleepEndTimestampGMT")/1000)
+            return (start, end, "sleeping")
+        except HttpError:
+            return False
+
     
-    return (start, end, "sleeping")
 
 def workouts_timeline(date):
     with GarminPersonalApiClient(access_token) as client:
@@ -54,10 +60,12 @@ def moveIQ_timeline(date):
     
 
 def handle(date):
-    sleep_data = sleep_timeline(date)
-    database.insert_activity(sleep_data[0], sleep_data[1], sleep_data[2])
+    date_str = date.strftime("%Y-%m-%d")
+    sleep_data = sleep_timeline(date_str)
+    if sleep_data:
+        database.insert_activity(sleep_data[0], sleep_data[1], sleep_data[2])
 
-    workout_data = workouts_timeline(date)
+    workout_data = workouts_timeline(date_str)
     for activity in workout_data:
         database.insert_activity(activity[0], activity[1], activity[2])
 
@@ -67,10 +75,21 @@ def handle(date):
 
     database.commit()
 
+def handle_unseen():
+    start = database.get_last_update()
+    end = datetime.date.today()
+
+    current = start
+    while current <= end:
+        handle(current)
+        current += datetime.timedelta(days=1)
+    database.set_last_update(datetime.date.today())
+
+        
+
 
 if __name__ == "__main__":
     database.setup()
-    #print(moveIQ_timeline("2026-11-05"))
-    handle("2026-11-06")
+    handle_unseen()
     database.close()
     

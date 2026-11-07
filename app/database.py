@@ -14,16 +14,21 @@ def setup():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS timeline (
             id INTEGER PRIMARY KEY,
-            start TIMESTAMP,
-            end TIMESTAMP,
+            start DATETIME,
+            end DATETIME,
             type TEXT
         )
     """)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS lastUpdate (
-            time TIMESTAMP PRIMARY KEY
+            date DATE PRIMARY KEY
         )
     """)
+    cursor.execute("SELECT * FROM lastUpdate")
+    isDate = cursor.fetchone()
+    if not isDate:
+        cursor.execute("INSERT INTO lastUpdate(date) VALUES (?)", (datetime.date(2026, 11, 3),))
+    conn.commit()
 
 
 
@@ -32,14 +37,18 @@ def get_all_activities():
     return cursor.fetchall()
 
 def get_date_activities(date):
-    date_str = date.isoformat()
-    cursor.execute("SELECT start, end, type FROM timeline WHERE DATE(end) = ? or DATE(start) = ?", (date_str, date_str))
+    #date_str = date.isoformat()
+    cursor.execute("SELECT start, end, type FROM timeline WHERE DATE(end) = ? or DATE(start) = ?", (date, date))
     data = cursor.fetchall()
     clipped_data = []
     for activity in data:
-        start = max(activity[0], datetime.datetime.combine(date, datetime.time.min))
-        end = min(activity[1], datetime.datetime.combine(date, datetime.time.max))
-        clipped_data.append((start, end, activity[2]))
+        activity_start = datetime.datetime.fromisoformat(activity[0]) if isinstance(activity[0], str) else activity[0]
+        activity_end = datetime.datetime.fromisoformat(activity[1]) if isinstance(activity[1], str) else activity[1]
+        
+        activity_start = max(activity_start, datetime.datetime.combine(date, datetime.time.min))
+        activity_end = min(activity_end, datetime.datetime.combine(date, datetime.time.max))
+
+        clipped_data.append((activity_start, activity_end, activity[2]))
 
     return tuple(clipped_data)
 
@@ -57,13 +66,14 @@ def insert_activity(start, end, type):
     )
 
 def get_last_update():
-    cursor.execute("SELECT time FROM lastUpdate")
+    cursor.execute("SELECT date FROM lastUpdate")
     last = cursor.fetchone()
-    return last[0] or datetime.datetime.min
+    return last[0]
 
 
-def set_last_update(datetime_val):
-    cursor.execute("INSERT OR REPLACE INTO lastUpdate (time) VALUES (?) ", (datetime_val.isoformat(),))
+def set_last_update(date_val):
+    cursor.execute("UPDATE lastUpdate SET date = ?", (date_val,))
+    commit()
 
 def reset(validation="NoPleaseDont"):
     global conn
@@ -81,9 +91,6 @@ def reset(validation="NoPleaseDont"):
         
     else:
         print("Call database.rest('YesIWantTo')")
-
-
-
 
 
 def commit():
