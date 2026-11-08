@@ -1,6 +1,7 @@
 import sqlite3
 import datetime
 import os 
+from icecream import ic
 
 DB_FILE_PATH = "tracker.db"
 
@@ -25,9 +26,11 @@ def setup():
         )
     """)
     cursor.execute("""
-            CREATE TABLE IF NOT EXISTS colour (
-                type TEXT PRIMARY KEY
-                colour TEXT 
+            CREATE TABLE IF NOT EXISTS types (
+                type TEXT PRIMARY KEY,
+                colour TEXT,
+                category TEXT,
+                importance INT
             )
         """)
     cursor.execute("SELECT * FROM lastUpdate")
@@ -35,6 +38,12 @@ def setup():
     if not isDate:
         cursor.execute("INSERT INTO lastUpdate(date) VALUES (?)", (datetime.date(2026, 11, 3),))
     conn.commit()
+
+def add_type(type, colour, category, importance):
+    cursor.execute("""  
+        INSERT INTO types(type, colour, category, importance)
+        VALUES (?, ?, ?, ?)""", (type, colour, category, importance)
+    )
 
 
 
@@ -71,6 +80,12 @@ def insert_activity(start, end, type):
         (start, end, type, start, end, type)
     )
 
+def get_colour(type):
+    cursor.execute("SELECT colour FROM types WHERE type = ?", (type,))
+    colour = cursor.fetchone()
+    
+    return None if colour == None else colour[0]
+
 def get_last_update():
     cursor.execute("SELECT date FROM lastUpdate")
     last = cursor.fetchone()
@@ -93,10 +108,16 @@ def reset(validation="NoPleaseDont"):
         cursor = conn.cursor()
         setup()
         set_last_update(datetime.datetime(2026, 11, 3))
+        add_type("sleeping", "#3b82f6", "rest", 1)
+        add_type("running", "#ff1100", "workout", 1)
+        add_type("cycling", "#ff1100", "workout", 1)
+        add_type("lap_swimming", "#ff1100", "workout", 1)
+
+
         conn.commit()
         
     else:
-        print("Call database.rest('YesIWantTo')")
+        print("Call database.reset('YesIWantTo')")
 
 
 def commit():
@@ -113,7 +134,6 @@ if __name__ == "__main__":
     commit()
   
     print(get_date_activities(datetime.date(2026, 11, 6)))
-
     commit()
     close()
 

@@ -15,7 +15,13 @@
             <div class="timeline-track">
                 {% for activity in day_data[1] %}
                 <div class="activity-bar" 
-                    style="left: {{ activity[0] }}%; width: {{ activity[1] }}%;">
+                    style="
+                        left: {{ activity[0] }}%; 
+                        width: {{ activity[1] }}%; 
+                        {% if activity[3] != None %}
+                            background: {{activity[3]}};
+                        {% endif %}
+                    ">
                     {{ activity[2] }}
                 </div>
                 {% endfor %}

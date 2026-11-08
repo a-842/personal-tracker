@@ -11,4 +11,5 @@ dependencies = [
     "waitress>=3.0.0",
     "python-dotenv>=1.0.0"
     "garmin-connect-personal-api-python>=1.0.0"
+    "icecream>=2.2.0"
 ]

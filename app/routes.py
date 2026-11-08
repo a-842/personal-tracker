@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template
 from app import render
-import datetime
 
 main_bp = Blueprint('main', __name__)
 

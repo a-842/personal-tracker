@@ -12,7 +12,9 @@ def get_timeline_data_date(date):
         left_percent = (start_seconds / 86400) * 100
         width_percent = (duration_seconds / 86400) * 100
 
-        out_data.append((left_percent, width_percent, activity[2]))
+        colour = database.get_colour(activity[2])
+
+        out_data.append((left_percent, width_percent, activity[2], colour))
 
     return out_data
 
